@@ -15,8 +15,7 @@ import matplotlib.pyplot as plt
 
 import pandas as pd
 
-if __name__=='__main__':
-
+def main():
     # count histograms are expected to be tab delimited:  tag count [other columns,e.g., constituent tags]
     # no header lines
 
@@ -106,3 +105,8 @@ if __name__=='__main__':
     ax.legend()
 
     plt.savefig( o.outPlot )
+
+
+
+if __name__ = '__main__':
+    main()

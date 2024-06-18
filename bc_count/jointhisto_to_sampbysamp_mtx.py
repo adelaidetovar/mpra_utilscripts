@@ -150,8 +150,7 @@ def overlapBeneathCumulSum( jh, lsamps, frac=0.90, suffix='_sum_hits' ):
     tblout=tblout[ ['sample']+lsamps ]
     return tblout
 
-if __name__=='__main__':
-    
+def main():
     opts = OptionParser()    
 
     opts.add_option('','--inKey',dest='inKey')
@@ -187,11 +186,7 @@ if __name__=='__main__':
     mtxPctOverlapSym = pctOverlapSym( jh, lLibs, o.suffix)
     mtxPctOverlapSym.to_csv( '%s.pctovlsym.txt'%o.outBase, index=False, sep='\t' )
 
-    
-    
-    
-    
 
 
-
-
+if __name__ == '__main__':
+    main()

@@ -17,8 +17,7 @@ import pandas as pd
 
 import Bio.Seq
 
-if __name__=='__main__':
-    
+def main():
     opts = argparse.ArgumentParser()
 
     opts.add_argument('--inSampleKey',dest='inSampleKey')
@@ -110,3 +109,7 @@ if __name__=='__main__':
         hist_joint['barcode'] = [ fnbc(x) for x in hist_joint['barcode'] ]
 
     hist_joint.to_csv( o.outHisto, sep='\t', index=False )
+
+
+if __name__ == '__main__':
+    main()

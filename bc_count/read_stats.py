@@ -3,8 +3,7 @@ import re
 import pandas as pd
 import argparse
 
-if __name__=='__main__':
-
+def main():
     opts = argparse.ArgumentParser()
 
     opts.add_argument('--in_clip', required = True)
@@ -73,3 +72,8 @@ if __name__=='__main__':
     summary_df.to_csv(out_tab, sep='\t', index=False)
 
     print(f"Summary table generated: {out_tab}")
+
+
+
+if __name__ == '__main__':
+    main()

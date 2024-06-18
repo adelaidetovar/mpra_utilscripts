@@ -8,10 +8,9 @@ import scipy.misc as sm
 
 import pandas as pd
 
-if __name__=='__main__':
+    # process and filter consensus barcode filter list from starcode
 
-    # process and filter consensus barcode filter list from 
-
+def main():
     opts = argparse.ArgumentParser()
    
     opts.add_argument('--in_histo',dest='in_histo')
@@ -55,3 +54,7 @@ if __name__=='__main__':
     outSummary.to_csv(o.out_summary, sep='\t', index=False)
 
     tbl_in.to_csv( o.out_histo, sep='\t', index=False )
+
+
+if __name__ == '__main__':
+    main()

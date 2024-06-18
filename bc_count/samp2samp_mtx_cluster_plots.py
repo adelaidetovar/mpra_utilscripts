@@ -87,8 +87,7 @@ def heatmap_samp2samp_set(
 
 
 
-if __name__=='__main__':
-    
+def main():    
     opts = OptionParser()    
 
     opts.add_option('','--inSamp2sampMtxBase',dest='inSamp2sampMtxBase')
@@ -110,3 +109,8 @@ if __name__=='__main__':
                            figsize=eval(o.figSize),
                            subsetRows=subsetRows,
                            subsetCols=subsetCols )
+
+
+
+if __name__ == '__main__':
+    main()
