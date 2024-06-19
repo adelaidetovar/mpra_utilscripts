@@ -37,7 +37,7 @@ def main():
                 input_read_pairs = int(re.search(r"Total read pairs processed:\s+([\d,]+)", cutadapt_in).group(1).replace(',', ''))
 
             # Get the number and percentage of pass-cutadapt read-pairs
-                pass_cutadapt = int(re.search(r"Pairs written \(passing filters\):\s+([\d,]+)", cutadapt_in).group(1)).replace(',', '')
+                pass_cutadapt = int(re.search(r"Pairs written \(passing filters\):\s+([\d,]+)", cutadapt_in).group(1).replace(',', ''))
                 pass_cutadapt_percentage = "{:.2f}%".format((pass_cutadapt / input_read_pairs) * 100)
 
             # Get the number and percentage of pass-umitools read-pairs
