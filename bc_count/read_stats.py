@@ -26,20 +26,19 @@ def main():
     # Process cutadapt logs
     for cutadapt_log in os.listdir(in_clip):
         if cutadapt_log.endswith(".clip.log"):
-            sample_name = os.path.basename(cutadapt_log).replace(".clip.log", "")
-            umitools_log = os.path.join(in_umi, f"{sample_name}.umi.log")
-            deduplicated_barcodes = os.path.join(in_umibc, f"{sample_name}.starumi")
-            clustered_barcodes = os.path.join(in_clust, f"{sample_name}.bc_cluster.txt")
+            libname = os.path.basename(cutadapt_log).replace(".clip.log", "")
+            umitools_log = os.path.join(in_umi, f"{libname}.umi.log")
+            deduplicated_barcodes = os.path.join(in_umibc, f"{libname}.starumi")
+            clustered_barcodes = os.path.join(in_clust, f"{libname}.bc_cluster.txt")
 
             # Get the number of input read-pairs from cutadapt log
             with open(os.path.join(in_clip, cutadapt_log), 'r') as f:
-                input_read_pairs = int(re.search(r"Total read pairs processed:\s+(\d+)", f.read()).group(1))
+                cutadapt_in = f.read() 
+                input_read_pairs = int(re.search(r"Total read pairs processed:\s+([\d,]+)", cutadapt_in).group(1).replace(',', ''))
 
             # Get the number and percentage of pass-cutadapt read-pairs
-            with open(os.path.join(in_clip, cutadapt_log), 'r') as f:
-                cutadapt_content = f.read()
-                pass_cutadapt = int(re.search(r"Pairs written \(passing filters\):\s+(\d+)", cutadapt_content).group(1))
-                pass_cutadapt_percentage = re.search(r"Pairs written \(passing filters\):.*\((\d+.\d+%)\)", cutadapt_content).group(1)
+                pass_cutadapt = int(re.search(r"Pairs written \(passing filters\):\s+([\d,]+)", cutadapt_in).group(1)).replace(',', '')
+                pass_cutadapt_percentage = "{:.2f}%".format((pass_cutadapt / input_read_pairs) * 100)
 
             # Get the number and percentage of pass-umitools read-pairs
             if in_umi and os.path.exists(umitools_log):
@@ -62,7 +61,7 @@ def main():
                 clustered_barcode_count = sum(1 for _ in f) - 1
 
             # Append to the summary table
-            summary_data.append([sample_name, input_read_pairs, pass_cutadapt, pass_cutadapt_percentage,
+            summary_data.append([libname, input_read_pairs, pass_cutadapt, pass_cutadapt_percentage,
                                  pass_umitools, pass_umitools_percentage, deduplicated_barcode_count, clustered_barcode_count])
 
     # Convert the summary data to a DataFrame and save to a file
