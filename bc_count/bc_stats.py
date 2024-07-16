@@ -44,6 +44,7 @@ def main():
 
     # make results table
     results = pd.DataFrame({
+        'File': files,
         'Total_number_bc': maxbc,
         'BC_at_80pct_of_reads': lowthresh,
         'BC_at_90pct_of_reads': midthresh,
@@ -54,7 +55,7 @@ def main():
     })
 
     # get sample names from input
-    results['Sample'] = results['files'].apply(lambda x: x.split('/')[-1].replace('.bc_cluster.txt', ''))
+    results['Sample'] = results['File'].apply(lambda x: x.split('/')[-1].replace('.bc_cluster.txt', ''))
 
     # write to file
     results.to_csv(o.out_tab, sep='\t', index=False)
