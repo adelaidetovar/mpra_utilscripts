@@ -11,7 +11,8 @@ setup(
 		                     'plot_tag_count_histos = bc_count.plot_tag_count_histos:main',
 		                     'read_stats = bc_count.read_stats:main',
 		                     'samp2samp_mtx_cluster_plots = bc_count.samp2samp_mtx_cluster_plots:main',
-		                     'read_stats_subasm = subasm.read_stats_subasm:main' ]
+		                     'read_stats_subasm = subasm.read_stats_subasm:main' ],
+		                     'bc_stats = bc_count.bc_stats:main'
 
 	}
 )
