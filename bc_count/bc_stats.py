@@ -61,6 +61,7 @@ def main():
 
     results.sort_values(by='Sample', inplace=True)
 
+    # make readable
     counts = ['Total_number_bc', 'BC_at_80pct_of_reads', 'BC_at_90pct_of_reads', 'BC_at_95pct_of_reads']
     percents = ['Pct_of_BC_at_80pct_of_reads', 'Pct_of_BC_at_90pct_of_reads', 'Pct_of_BC_at_95pct_of_reads']
 
