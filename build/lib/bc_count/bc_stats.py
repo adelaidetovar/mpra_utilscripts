@@ -55,22 +55,10 @@ def main():
     })
 
     # get sample names from input
-    results['Sample'] = results['File'].apply(lambda x: os.path.basename(x).replace('.bc_cluster.txt', ''))
-    results.drop(columns=['File'], inplace=True)
-    results = results[['Sample'] + [col for col in results.columns if col != 'Sample']]
-
-    results.sort_values(by='Sample', inplace=True)
-
-    counts = ['Total_number_bc', 'BC_at_80pct_of_reads', 'BC_at_90pct_of_reads', 'BC_at_95pct_of_reads']
-    percents = ['Pct_of_BC_at_80pct_of_reads', 'Pct_of_BC_at_90pct_of_reads', 'Pct_of_BC_at_95pct_of_reads']
-
-    results[counts] = results[counts].astype(int).apply(lambda col: col.map(lambda x: f"{x:,}" if pd.notnull(x) else x))
-    results[percents] = results[percents].apply(lambda col: col.map(lambda x: f"{x:.2f}%" if pd.notnull(x) else x))
+    results['Sample'] = results['File'].apply(lambda x: x.split('/')[-1].replace('.bc_cluster.txt', ''))
 
     # write to file
     results.to_csv(o.out_tab, sep='\t', index=False)
-
-    print(f"Barcode stats table generated!")
 
 
 if __name__ == '__main__':
