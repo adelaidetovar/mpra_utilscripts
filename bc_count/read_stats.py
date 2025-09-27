@@ -91,30 +91,29 @@ def main():
                 libname = os.path.basename(cutadapt_log).replace(".clip.log", "")
                 clustered_barcodes = os.path.join(in_clust, f"{libname}.bc_cluster.txt")
 
-                # input read pairs from cutadapt
+                # input reads, reads with barcode from cutadapt
+                pass_cutadapt = 0
+                pass_cutadapt_percentage = "NA"
                 with open(os.path.join(in_clip, cutadapt_log), 'r') as f:
                     cutadapt_in = f.read()
                     try:
                         input_reads = int(re.search(r"Total reads processed:\s+([\d,]+)", cutadapt_in).group(1).replace(',', ''))
-                    except AttributeError:
-                        print(f"Error: Cannot find 'Total reads processed' in {cutadapt_log}!")
-                        continue
-
-                    # pass-cutadapt read-pairs
-                    try:
                         pass_cutadapt = int(re.search(r"Reads written \(passing filters\):\s+([\d,]+)", cutadapt_in).group(1).replace(',', ''))
                         pass_cutadapt_percentage = "{:.2f}%".format((pass_cutadapt / input_reads) * 100)
                     except AttributeError:
-                        print(f"Error: Cannot find 'Reads written (passing filters)' in {cutadapt_log}!")
+                        print(f"Error: unable to parse {cutadapt_log}!")
                         continue
-
+                
+                # clustered barcodes
                 clustered_barcode_count = 0
                 if os.path.exists(clustered_barcodes):
                     with open(clustered_barcodes, 'r') as f:
                         clustered_barcode_count = sum(1 for _ in f) - 1
-
+                
+                # add to summary table
                 summary_data.append([libname, input_reads, pass_cutadapt, pass_cutadapt_percentage, clustered_barcode_count])
 
+        # save to a file
         columns = ["Sample", "Input_Reads", "Pass_Cutadapt_Reads", "Pass_Cutadapt_Percentage", "Clustered_Barcodes"]
         summary_df = pd.DataFrame(summary_data, columns=columns)
         summary_df.sort_values(by="Sample", inplace=True)
@@ -126,4 +125,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
