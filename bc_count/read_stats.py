@@ -7,7 +7,7 @@ def main():
     opts = argparse.ArgumentParser()
 
     opts.add_argument('--in_clip', required=True)
-    opts.add_argument('--use_umi', default=True)
+    opts.add_argument('--use_umi', action="store_true")
     opts.add_argument('--in_umi', default=None)
     opts.add_argument('--in_umibc', default=None)
     opts.add_argument('--in_clust', required=True)
@@ -34,11 +34,13 @@ def main():
                 clustered_barcodes = os.path.join(in_clust, f"{libname}.bc_cluster.txt")
 
                 # input reads, reads with barcode from cutadapt
+                pass_cutadapt = 0
+                pass_cutadapt_percentage = "N/A"
                 with open(os.path.join(in_clip, cutadapt_log), 'r') as f:
                     cutadapt_in = f.read()
                     try:
-                        input_reads = int(re.search(r"Total reads processed:\s+([\d,]+)", cutadapt_in).group(1).replace(',', ''))
-                        pass_cutadapt = int(re.search(r"Reads written \(passing filters\):\s+([\d,]+)", cutadapt_in).group(1).replace(',', ''))
+                        input_reads = int(re.search(r"Total read pairs processed:\s+([\d,]+)", cutadapt_in).group(1).replace(',', ''))
+                        pass_cutadapt = int(re.search(r"Pairs written \(passing filters\):\s+([\d,]+)", cutadapt_in).group(1).replace(',', ''))
                         pass_cutadapt_percentage = "{:.2f}%".format((pass_cutadapt / input_reads) * 100)
                     except AttributeError:
                         print(f"Error: unable to parse {cutadapt_log}!")
@@ -47,7 +49,7 @@ def main():
                 # reads with umi from umitools
                 pass_umitools = 0
                 pass_umitools_percentage = "N/A"
-                with open(os.path.join(in_umi, umitools_log), 'r') as f:
+                with open(umitools_log, 'r') as f:
                     umitools_in = f.read()
                     try:
                         pass_umitools = int(re.search(r"Reads output:\s+(\d+)", umitools_in).group(1))
@@ -68,16 +70,23 @@ def main():
                     with open(clustered_barcodes, 'r') as f:
                         clustered_barcode_count = sum(1 for _ in f) - 1
 
+                # calculate reads per umi and umis per barcodes
+                reads_per_umi = "{:.2f}".format(pass_umitools / deduplicated_barcode_count)
+                umis_per_bc = "{:.2f}".format(deduplicated_barcode_count / clustered_barcode_count)
+
+
                 # add to summary table
                 summary_data.append([libname, input_reads, pass_cutadapt, pass_cutadapt_percentage, pass_umitools, pass_umitools_percentage, 
-                                    deduplicated_barcode_count, clustered_barcode_count])
+                                    deduplicated_barcode_count, reads_per_umi, clustered_barcode_count, umis_per_bc])
 
         # save to a file
         columns = ["Sample", "Input_Reads", "Pass_Cutadapt_Reads", "Pass_Cutadapt_Percentage",
-                   "Pass_Umitools_Reads", "Pass_Umitools_Percentage","Deduplicated_Amplicons", "Clustered_Barcodes"]
+                   "Pass_Umitools_Reads", "Pass_Umitools_Percentage","Deduplicated_Amplicons", "Reads_Per_UMI",
+                   "Clustered_Barcodes", "UMIs_Per_Barcode"]
         summary_df = pd.DataFrame(summary_data, columns=columns)
         summary_df.sort_values(by = "Sample", inplace=True)
-        comma_cols = summary_df.columns.difference(["Sample", "Pass_Cutadapt_Percentage", "Pass_Umitools_Percentage", ])
+        comma_cols = summary_df.columns.difference(["Sample", "Pass_Cutadapt_Percentage", "Pass_Umitools_Percentage",
+                                                    "Reads_Per_UMI", "UMIs_Per_Barcode"])
         summary_df[comma_cols] = summary_df[comma_cols].apply(lambda col: col.map(lambda x: f"{x:,}" if pd.notnull(x) else x))
         summary_df.to_csv(out_tab, sep='\t', index=False)
 
