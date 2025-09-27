@@ -26,16 +26,14 @@ def main():
 
     if use_umi is True:
         # get logs
-        for umitools_log in os.listdir(in_umi):
-            if umitools_log.endswith(".umi.log"):
-                libname = os.path.basename(umitools_log).replace(".umi.log", "")
-                cutadapt_log = os.path.join(in_clip, f"{libname}.clip.log")
+        for cutadapt_log in os.listdir(in_clip):
+            if cutadapt_log.endswith(".clip.log"):
+                libname = os.path.basename(cutadapt_log).replace(".clip.log", "")
+                umitools_log = os.path.join(in_umi, f"{libname}.umi.log")
                 deduplicated_barcodes = os.path.join(in_umibc, f"{libname}.starumi") if in_umibc else None
                 clustered_barcodes = os.path.join(in_clust, f"{libname}.bc_cluster.txt")
 
                 # input reads, reads with barcode from cutadapt
-                pass_cutadapt = 0
-                pass_cutadapt_percentage = "NA"
                 with open(os.path.join(in_clip, cutadapt_log), 'r') as f:
                     cutadapt_in = f.read()
                     try:
